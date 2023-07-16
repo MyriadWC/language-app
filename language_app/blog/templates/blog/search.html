@@ -1,0 +1,12 @@
+{% extends 'blog/base.html' %}
+{% block content %}
+<p>Words containing '{{query_string}}'</p> 
+{% for definition in definitions %}
+    <div>
+        <a href="{% url 'definition_detail' slug=definition.slug %}"><h2 class="page-title">{{ definition.word }}</h2></a>
+        <div class="post">
+            {{ definition.description|safe }}
+        </div>
+    </div>
+{% endfor %}
+{% endblock content %}

@@ -1,0 +1,35 @@
+{% extends "blog/base.html" %}
+{% block content %}
+<div class="jumbotron mt-3 shadow-lg">
+<article class="media content-section shadow ">
+   <a href="{{ object.author.profile.image.url }} " target="_blank"> <img src="{{ object.author.profile.image.url }}  " alt="" class="article-img rounded-circle img-thumbnail img-fluid">
+   </a>
+    <div class="media-body">
+      <div class="">
+        <div class="d-flex justify-content-between">
+        <a class="mr-2 mt-0 mb-0  text-dark" href="{% url 'user-definitions' object.author.username  %}"><h3>{{ object.author }}</h3></a>
+        <small class="text-muted  text-align-right">{{ object.date_posted }}</small>
+        </div>
+        {% if object.author != user %}
+        <form action="{% url 'like-definition' definition.pk %}" method="POST">
+          {% csrf_token %}
+          <button type="submit", name="definition_id", value="{{ definition.id }}", class="btn btn-outline-primary btn-d">
+            <i class="fas fa-star"></i> {{ total_likes }}
+          </button>
+        </form>
+        {% endif %}
+        <hr>
+        {% if object.author == user %}
+          <div>
+            <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'definition-update' object.id %}">Update</a>
+            <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'definition-delete' object.id %}">Delete</a>
+          </div>
+        {% endif %}
+      </div>
+      <div>
+        <h2>{{ object.word }}</h2>
+        <p>{{ object.description }}</p>
+      </div>
+    </div>
+  </article>
+{% endblock content %}

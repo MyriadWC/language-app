@@ -1,0 +1,64 @@
+{% extends "blog/base.html" %}
+{% block content %}
+
+    {% for definition in definitions %}
+    <div class="jumbotron mt-3 bg-white shadow-lg">
+    <article class="media content-section shadow">
+      <a href="{{ definition.author.profile.image.url }} " target="_blank"> <img src="{{ definition.author.profile.image.url }}  " alt="" class="article-img rounded-circle img-thumbnail img-fluid shadow">
+      </a>
+      <div class="media-body">
+        <div class="article-metadata d-flex justify-content-between">
+          <a class="mr-2 " href="{% url 'user-definitions' definition.author.username  %}"><h3>{{ definition.author }}</h3></a>
+            <small class="text-muted">{{ definition.date_posted|date:"F d, Y" }}</small>
+        </div>
+        <h2><a class="article-title text-justify " href="{% url 'definition-detail' definition.id %}">{{ definition.word }}</a></h2>
+        <div class="d-flex justify-content-between">
+          <p class="article-content text-justify text-truncate overflow-hidden">{{ definition.content }}</p>
+        <div class="form-group mt-0 pt-0  m-2">
+          {% if definition.author != user %}
+          <!--<div class="btn btn-outline-primary btn-d"><i class="fas fa-star"></i> 32</div>-->
+          <form action="{% url 'like-definition' definition.pk %}" method="POST">
+            {% csrf_token %}
+            <button type="submit", name="definition_id", value="{{ definition.id }}", class="btn btn-outline-primary btn-d">
+              <i class="fas fa-star"></i> {{ definition.total_likes }}
+            </button>
+          </form>
+          {% endif %}
+          {% if definition.author == user %}
+          <div><a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'definition-update' definition.id %}">Edit</a></div>
+          {% endif %}
+      </div>
+    </article>
+    </div>   
+  {% endfor %}
+  {% if is_paginated %}
+
+    {% if page_obj.has_previous %}
+      <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
+      <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+      {% if page_obj.number == num %}
+        <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+      {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+        <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
+      {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+      <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
+      <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+    {% endif %}
+
+  {% endif %} 
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script>
+      $('.btn-star').click(function() {
+          $.post('/edit_favorites/', { video: $('#test').val() }, function(data) {
+            $('#message').html(data);
+          });
+      });
+  </script>
+{% endblock content %}
