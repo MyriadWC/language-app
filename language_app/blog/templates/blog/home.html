@@ -17,12 +17,14 @@
         <div class="form-group mt-0 pt-0  m-2">
           {% if definition.author != user %}
           <!--<div class="btn btn-outline-primary btn-d"><i class="fas fa-star"></i> 32</div>-->
-          <form action="{% url 'like-definition' definition.pk %}" method="POST">
+          <form class="like-form" action="{% url 'definition-like' definition.pk %}" method="POST">
             {% csrf_token %}
-            <button type="submit", name="definition_id", value="{{ definition.id }}", class="btn btn-outline-primary btn-d">
-              <i class="fas fa-star"></i> {{ definition.total_likes }}
+            <input type="hidden" name="definition_id" value="{{ definition.id }}">
+            <button type="submit" class="btn btn-outline-primary btn-d">
+                <i class="fas fa-star"></i>
+                <span class="like-count">{{ definition.total_likes }}</span>
             </button>
-          </form>
+        </form>
           {% endif %}
           {% if definition.author == user %}
           <div><a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'definition-update' definition.id %}">Edit</a></div>
@@ -55,10 +57,25 @@
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
   <script>
-      $('.btn-star').click(function() {
-          $.post('/edit_favorites/', { video: $('#test').val() }, function(data) {
-            $('#message').html(data);
-          });
+    $(document).ready(function() {
+
+      //Updates likes when like button pressed
+      $('.like-form').on('submit', function(event) {
+        event.preventDefault();
+        var form = $(this);
+        var url = form.attr('action');
+        var data = form.serialize();
+        $.ajax({
+          type: 'POST',
+          url: url,
+          data: data,
+          success: function(response) {
+            console.log('Ajax request successful.')
+            // Update the like count
+            form.find('.like-count').text(response.total_likes);
+          }
+        });
       });
+    });
   </script>
 {% endblock content %}

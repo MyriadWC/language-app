@@ -140,6 +140,7 @@ class DefinitionDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 def LikeView(request, pk):
 
+    """
     #TODO: Change this to ajax so page doesn't refresh
     definition = get_object_or_404(Definition, id=request.POST.get('definition_id'))
     definition.likes.add(request.user)
@@ -152,6 +153,18 @@ def LikeView(request, pk):
     else:
         # Fallback to a default URL if HTTP_REFERER is not provided
         return HttpResponseRedirect(reverse('definition-detail', args=[str(pk)]))
+    """
+    is_ajax = request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
+
+    if is_ajax:
+
+        definition = get_object_or_404(Definition, id=request.POST.get('definition_id'))
+        definition.likes.add(request.user)
+
+        return JsonResponse({'total_likes': definition.total_likes()})
+    else:
+        # Non-Ajax requests (Shouldn't be any for likes)
+        pass
 
 def about(request):
     return render(request, 'blog/about.html', {'title': 'About'})
