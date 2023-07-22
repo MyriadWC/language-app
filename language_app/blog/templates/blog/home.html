@@ -16,15 +16,22 @@
           <p class="article-content text-justify text-truncate overflow-hidden">{{ definition.content }}</p>
         <div class="form-group mt-0 pt-0  m-2">
           {% if definition.author != user %}
-          <!--<div class="btn btn-outline-primary btn-d"><i class="fas fa-star"></i> 32</div>-->
           <form class="like-form" action="{% url 'definition-like' definition.pk %}" method="POST">
             {% csrf_token %}
             <input type="hidden" name="definition_id" value="{{ definition.id }}">
-            <button type="submit" class="btn btn-outline-primary btn-d">
-                <i class="fas fa-star"></i>
+            <!---Find a more efficient way to write this. Can't figure out how to combine with and if to create conditional variable--->
+            {% if user in definition.likes.all %}
+            <button type="submit" class="btn btn-primary btn-d">
+              <i class="fas fa-star"></i>
                 <span class="like-count">{{ definition.total_likes }}</span>
             </button>
-        </form>
+            {% else %}
+            <button type="submit" class="btn btn-outline-primary btn-d">
+            <i class="fas fa-star"></i>
+                <span class="like-count">{{ definition.total_likes }}</span>
+            </button>
+            {% endif %}
+          </form>
           {% endif %}
           {% if definition.author == user %}
           <div><a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'definition-update' definition.id %}">Edit</a></div>
@@ -59,6 +66,12 @@
   <script>
     $(document).ready(function() {
 
+      /*
+      TODO:
+        1. Hilight the button initially if the user has previously liked that definition
+        2. On click, add like if the user hasn't liked that comment, and remove if they have
+      */
+
       //Updates likes when like button pressed
       $('.like-form').on('submit', function(event) {
         event.preventDefault();
@@ -70,9 +83,11 @@
           url: url,
           data: data,
           success: function(response) {
-            console.log('Ajax request successful.')
             // Update the like count
             form.find('.like-count').text(response.total_likes);
+
+            //Change button from outline to block
+            form.find('button').toggleClass('btn-outline-primary btn-primary')
           }
         });
       });

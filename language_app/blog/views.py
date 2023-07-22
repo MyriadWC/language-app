@@ -159,7 +159,16 @@ def LikeView(request, pk):
     if is_ajax:
 
         definition = get_object_or_404(Definition, id=request.POST.get('definition_id'))
-        definition.likes.add(request.user)
+        user = request.user
+    
+        if definition.likes.filter(id=user.id).exists():
+
+            # The user has already liked the definition, so remove the like
+            definition.likes.remove(user)
+        else:
+
+            # The user has not liked the definition yet, so add the like
+            definition.likes.add(user)
 
         return JsonResponse({'total_likes': definition.total_likes()})
     else:
