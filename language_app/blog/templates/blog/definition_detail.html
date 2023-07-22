@@ -11,7 +11,7 @@
         <small class="text-muted  text-align-right">{{ object.date_posted }}</small>
         </div>
         {% if object.author != user %}
-        <form action="{% url 'like-definition' definition.pk %}" method="POST">
+        <form action="{% url 'definition-like' definition.pk %}" method="POST">
           {% csrf_token %}
           <button type="submit", name="definition_id", value="{{ definition.id }}", class="btn btn-outline-primary btn-d">
             <i class="fas fa-star"></i> {{ total_likes }}

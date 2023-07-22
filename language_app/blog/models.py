@@ -20,15 +20,3 @@ class Definition(models.Model):
 	
 	def total_likes(self):
 		return self.likes.count()
-    
-
-class Phrase(models.Model):
-	content = models.CharField(max_length=200)
-
-	def __str__(self):
-		return self.content
-
-
-class EnRuDictionary(models.Model):
-	word_english = models.CharField(unique=True, max_length=50)
-	word_russian = models.CharField(unique=True, max_length=50)

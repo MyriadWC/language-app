@@ -2,21 +2,18 @@
 {% block content %}
 
     {% for definition in definitions %}
-    <div class="jumbotron mt-3 bg-white shadow-lg">
-    <article class="media content-section shadow">
-      <a href="{{ definition.author.profile.image.url }} " target="_blank"> <img src="{{ definition.author.profile.image.url }}  " alt="" class="article-img rounded-circle img-thumbnail img-fluid shadow">
-      </a>
+    <div>
+    <article class="media content-section shadow mt-3">
+      <a href="{{ definition.author.profile.image.url }} " target="_blank"> <img src="{{ definition.author.profile.image.url }}  " alt="" class="article-img rounded-circle img-thumbnail img-fluid shadow"></a>
       <div class="media-body">
-        <div class="article-metadata d-flex justify-content-between">
-          <a class="mr-2 " href="{% url 'user-definitions' definition.author.username  %}"><h3>{{ definition.author }}</h3></a>
-            <small class="text-muted">{{ definition.date_posted|date:"F d, Y" }}</small>
+        <div class="article-metadata">
+          <a class="mr-2" href="{% url 'user-definitions' definition.author.username %}">{{ definition.author }}</a>
+          <small class="text-muted">{{ definition.date_posted|date:"F d, Y" }}</small>
         </div>
-        <h2><a class="article-title text-justify " href="{% url 'definition-detail' definition.id %}">{{ definition.word }}</a></h2>
-        <div class="d-flex justify-content-between">
-          <p class="article-content text-justify text-truncate overflow-hidden">{{ definition.content }}</p>
-        <div class="form-group mt-0 pt-0  m-2">
+        <h2><a class="article-title" href="{% url 'definition-detail' definition.id %}">{{ definition.word }}</a></h2>
+        <p class="article-content">{{ definition.description }}</p>
           {% if definition.author != user %}
-          <form class="like-form" action="{% url 'definition-like' definition.pk %}" method="POST">
+          <form class="like-form float-right" action="{% url 'definition-like' definition.pk %}" method="POST">
             {% csrf_token %}
             <input type="hidden" name="definition_id" value="{{ definition.id }}">
             <!---Find a more efficient way to write this. Can't figure out how to combine with and if to create conditional variable--->
@@ -34,7 +31,7 @@
           </form>
           {% endif %}
           {% if definition.author == user %}
-          <div><a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'definition-update' definition.id %}">Edit</a></div>
+          <div class="float-right"><a class="btn btn-secondary mt-1 mb-1" href="{% url 'definition-update' definition.id %}">Edit</a></div>
           {% endif %}
       </div>
     </article>

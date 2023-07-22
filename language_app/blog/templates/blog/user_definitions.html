@@ -1,6 +1,6 @@
 {% extends "blog/base.html" %}
 {% block content %}
-    <h1 class="mb-3">Definitions by {{ view.kwargs.username }} ({{ page_obj.paginator.count }})</h1>
+    <h1 class="mt-3 mb-3">Definitions by {{ view.kwargs.username }} ({{ page_obj.paginator.count }})</h1>
     {% for definition in definitions %}
         <article class="media content-section">
           <img class="rounded-circle article-img" src="{{ definition.author.profile.image.url }}">
@@ -10,7 +10,7 @@
               <small class="text-muted">{{ definition.date_posted|date:"F d, Y" }}</small>
             </div>
             <h2><a class="article-title" href="{% url 'definition-detail' definition.id %}">{{ definition.word }}</a></h2>
-            <p class="article-content">{{ defninition.description }}</p>
+            <p class="article-content">{{ definition.description }}</p>
           </div>
         </article>
     {% endfor %}

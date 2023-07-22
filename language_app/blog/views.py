@@ -1,7 +1,7 @@
 import random
 
 from django.shortcuts import render, get_object_or_404
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
 from django.views.generic import (
@@ -12,7 +12,6 @@ from django.views.generic import (
     DeleteView
 )
 from .models import Definition
-from .models import Phrase
 import operator
 from django.urls import reverse_lazy, reverse
 from django.contrib.staticfiles.views import serve
@@ -27,12 +26,13 @@ def home(request):
     return render(request, 'blog/home.html', context)
 
 def search(request):
+    # Change this to use the search page (with home potentially embedded inside)
     template='blog/home.html'
 
     query=request.GET.get('q')
 
     result=Definition.objects.filter(Q(word__icontains=query) | Q(author__username__icontains=query) | Q(description__icontains=query))
-    paginate_by=2
+    paginate_by=10
     context={ 'definitions':result }
     return render(request,template,context)
    
@@ -72,7 +72,7 @@ class DefinitionListView(ListView):
     template_name = 'blog/home.html'  # <app>/<model>_<viewtype>.html
     context_object_name = 'definitions'
     ordering = ['-date_posted']
-    paginate_by = 2
+    paginate_by = 10
 
 
 class UserDefinitionListView(ListView):
@@ -140,20 +140,6 @@ class DefinitionDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 def LikeView(request, pk):
 
-    """
-    #TODO: Change this to ajax so page doesn't refresh
-    definition = get_object_or_404(Definition, id=request.POST.get('definition_id'))
-    definition.likes.add(request.user)
-
-    # Get the referring URL from the HTTP_REFERER header
-    next_url = request.META.get('HTTP_REFERER')
-    if next_url:
-        # Redirect back to the referring URL
-        return HttpResponseRedirect(next_url)
-    else:
-        # Fallback to a default URL if HTTP_REFERER is not provided
-        return HttpResponseRedirect(reverse('definition-detail', args=[str(pk)]))
-    """
     is_ajax = request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
 
     if is_ajax:
