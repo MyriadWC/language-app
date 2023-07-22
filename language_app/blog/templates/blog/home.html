@@ -1,8 +1,13 @@
 {% extends "blog/base.html" %}
 {% block content %}
-
+    <div class="select-category mt-3">
+      <button class="btn btn-dark">Most recent</button>
+      <button class="btn btn-outline-dark">Popular today</button>
+      <button class="btn btn-outline-dark">Popular this week</button>
+      <button class="btn btn-outline-dark">All time most popular</button>
+    </div>
+    
     {% for definition in definitions %}
-    <div>
     <article class="media content-section shadow mt-3">
       <a href="{{ definition.author.profile.image.url }} " target="_blank"> <img src="{{ definition.author.profile.image.url }}  " alt="" class="article-img rounded-circle img-thumbnail img-fluid shadow"></a>
       <div class="media-body">
@@ -12,31 +17,33 @@
         </div>
         <h2><a class="article-title" href="{% url 'definition-detail' definition.id %}">{{ definition.word }}</a></h2>
         <p class="article-content">{{ definition.description }}</p>
-          {% if definition.author != user %}
-          <form class="like-form float-right" action="{% url 'definition-like' definition.pk %}" method="POST">
-            {% csrf_token %}
-            <input type="hidden" name="definition_id" value="{{ definition.id }}">
-            <!---Find a more efficient way to write this. Can't figure out how to combine with and if to create conditional variable--->
-            {% if user in definition.likes.all %}
-            <button type="submit" class="btn btn-primary btn-d">
-              <i class="fas fa-star"></i>
-                <span class="like-count">{{ definition.total_likes }}</span>
-            </button>
-            {% else %}
-            <button type="submit" class="btn btn-outline-primary btn-d">
+        {% if definition.author != user %}
+        <form class="like-form float-right" action="{% url 'definition-like' definition.pk %}" method="POST">
+          {% csrf_token %}
+          <input type="hidden" name="definition_id" value="{{ definition.id }}">
+          <!---Find a more efficient way to write this. Can't figure out how to combine with and if to create conditional variable--->
+          {% if user in definition.likes.all %}
+          <button type="submit" class="btn btn-primary btn-d">
             <i class="fas fa-star"></i>
-                <span class="like-count">{{ definition.total_likes }}</span>
-            </button>
-            {% endif %}
-          </form>
+              <span class="like-count">{{ definition.total_likes }}</span>
+          </button>
+          {% else %}
+          <button type="submit" class="btn btn-outline-primary btn-d">
+          <i class="fas fa-star"></i>
+              <span class="like-count">{{ definition.total_likes }}</span>
+          </button>
           {% endif %}
-          {% if definition.author == user %}
-          <div class="float-right"><a class="btn btn-secondary mt-1 mb-1" href="{% url 'definition-update' definition.id %}">Edit</a></div>
-          {% endif %}
+        </form>
+        {% endif %}
+        {% if definition.author == user %}
+        <div class="float-right"><a class="btn btn-warning mt-1 mb-1" href="{% url 'definition-update' definition.id %}">Edit</a></div>
+        {% endif %}
       </div>
     </article>
-    </div>   
-  {% endfor %}
+    {% empty %}
+    <p>No definitions to show!</p>
+    {% endfor %}
+
   {% if is_paginated %}
 
     {% if page_obj.has_previous %}

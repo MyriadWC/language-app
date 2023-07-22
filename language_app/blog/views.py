@@ -4,6 +4,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
+
 from django.views.generic import (
     ListView,
     DetailView,
@@ -11,7 +12,12 @@ from django.views.generic import (
     UpdateView,
     DeleteView
 )
-from .models import Definition
+
+from .models import (
+    Definition,
+    Category
+    )
+
 import operator
 from django.urls import reverse_lazy, reverse
 from django.contrib.staticfiles.views import serve
@@ -21,7 +27,8 @@ from django.db.models import Q
 # Don't think this gets used?
 def home(request):
     context = {
-        'definitions': Definition.objects.all()
+        'definitions': Definition.objects.all(),
+        'categories': Category.objects.all()
     }
     return render(request, 'blog/home.html', context)
 
@@ -35,33 +42,6 @@ def search(request):
     paginate_by=10
     context={ 'definitions':result }
     return render(request,template,context)
-   
-def learn(request):
-    # NOTE: This is obviously not scalable as it fetches all values
-    # in the table each time a new set of phrases is picked. Look
-    # into efficient ways to randomly select values from a db.
-    # IDEA 1: https://stackoverflow.com/questions/1731346/how-to-get-two-random-records-with-django
-    # IDEA 2: Fetch 100 rows in order etc. and return 10 at random
-    num_phrases = 10
-    phrases = Phrase.objects.all()
-    #random_phrases = random.sample(list(phrases), num_phrases)
-    random_phrase = str(random.choice(list(phrases)))
-    print(random_phrase)
-
-    is_ajax = request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
-    
-    if is_ajax:
-        # Convert queryset to list of dictionaries so can be serialised to JSON
-        #data = {'phrases': [{'content': phrase.content} for phrase in random_phrases]}
-        data = {'phrase': random_phrase}
-        
-        return JsonResponse(data)
-    else:
-        context = {
-            #'phrases': random_phrases
-            'phrase': random_phrase
-        }
-        return render(request, 'blog/learn.html', context)
 
 def getfile(request):
    return serve(request, 'File')
@@ -79,7 +59,14 @@ class UserDefinitionListView(ListView):
     model = Definition
     template_name = 'blog/user_definitions.html'  # <app>/<model>_<viewtype>.html
     context_object_name = 'definitions'
-    paginate_by = 2
+    paginate_by = 10
+
+    # Override this method to add categories to context
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        return context
 
     def get_queryset(self):
         user = get_object_or_404(User, username=self.kwargs.get('username'))

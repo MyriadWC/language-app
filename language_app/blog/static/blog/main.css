@@ -4,6 +4,7 @@ body {
   margin-top: 0;
 }
 
+
 h1, h2, h3, h4, h5, h6 {
   color: #444444;
 }
@@ -89,7 +90,20 @@ a.article-title:hover {
   font-size: 2.5rem;
 }
 
+/* Sidebar */
+
+
+/* Homepage definition tile styling */
+
+.article-content {
+  display: inline-block;
+}
+
+.like-form {
+  display: inline-block;
+}
+
 .form-control:focus {
-  box-shadow: none !important;
-  outline: none !important;
+  box-shadow: none;
+  outline: none;
 }

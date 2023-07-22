@@ -20,3 +20,6 @@ class Definition(models.Model):
 	
 	def total_likes(self):
 		return self.likes.count()
+	
+class Category(models.Model):
+	name = models.CharField(max_length=100)
