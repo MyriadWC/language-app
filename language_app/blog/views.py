@@ -27,8 +27,7 @@ from django.db.models import Q
 # Don't think this gets used?
 def home(request):
     context = {
-        'definitions': Definition.objects.all(),
-        'categories': Category.objects.all()
+        'definitions': Definition.objects.all()
     }
     return render(request, 'blog/home.html', context)
 
@@ -54,19 +53,20 @@ class DefinitionListView(ListView):
     ordering = ['-date_posted']
     paginate_by = 10
 
+    # Override this method to add categories to context
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+        # Order categories alphabetically
+        context['categories'] = Category.objects.all().order_by('name')
+        return context
+
 
 class UserDefinitionListView(ListView):
     model = Definition
     template_name = 'blog/user_definitions.html'  # <app>/<model>_<viewtype>.html
     context_object_name = 'definitions'
     paginate_by = 10
-
-    # Override this method to add categories to context
-    def get_context_data(self, **kwargs):
-
-        context = super().get_context_data(**kwargs)
-        context['categories'] = Category.objects.all()
-        return context
 
     def get_queryset(self):
         user = get_object_or_404(User, username=self.kwargs.get('username'))

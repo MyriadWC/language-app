@@ -1,91 +1,97 @@
 {% load static %}
 <!doctype html>
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.4.0/css/all.css" >
-    <link rel="stylesheet" href="{% static 'blog/main.css' %}">
-
-    <title>{{title|default:"Corporate Jargon Dictionary"}}</title>
-
-  </head>
-  <body>
-        <nav class="navbar navbar-expand-lg navbar-light" style="background-color:#ffd60a">
-                <a class="navbar-brand" href="{% url 'blog-home' %}">
-                  <!--<img class="rounded-circle site-logo" src="{{ MEDIA_URL }}/branding/langdaddy.png">-->
-                  Corporate Jargon Dictionary
+   <head>
+      <!-- Required meta tags -->
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <!-- CSS -->
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.4.0/css/all.css" >
+      <link rel="stylesheet" href="{% static 'blog/main.css' %}">
+      <title>{{title|default:"Corporate Jargon Dictionary"}}</title>
+   </head>
+   <body>
+      <main>
+      <nav class="navbar navbar-expand-lg navbar-light">
+         <a class="navbar-brand" href="{% url 'blog-home' %}">
+            <!--<img class="rounded-circle site-logo" src="{{ MEDIA_URL }}/branding/langdaddy.png">-->
+            Corporate Jargon Dictionary
+         </a>
+         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+         <span class="navbar-toggler-icon"></span>
+         </button>
+         <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <!--<ul class="navbar-nav mr-auto">
+               <li class="nav-item active">
+                 <a class="nav-link" href="{% url 'blog-home' %}"><i class="fas fa-home"></i> Home <span class="sr-only">(current)</span></a>
+               </li>
+               
+               </ul>-->
+            <!------{{ request.get_host }}/blog/search/-->
+            {% if user.is_authenticated %}
+            <a href="{% url 'user-definitions' user %}" class="btn text-black m-1"><i class="fas fa-book"></i> My Definitions</a>
+            <a href="{% url 'definition-create' %} " class="btn text-black m-1"><i class="fas fa-pen"></i> New Definition</a>
+            <a href="{% url 'profile' %} " class="btn text-black m-1"><i class="fas fa-user"></i> {{ user.username }}</a>
+            <a title="Log out" href="{% url 'logout' %} " class="btn text-black m-1"><i class="fas fa-sign-out-alt"></i></a>
+            {% else %}
+            <a href="{% url 'login' %} " class="btn text-black m-1"><i class="fas fa-user-tie"></i> Log In</a>
+            <a href="{% url 'register' %} " class="btn text-black m-1"> <i class="fas fa-sign-in-alt"></i> Sign Up</a>
+            {% endif %}
+            <form id="searchform" action="{% url 'search' %}" method="get">
+               <div class="p-0 bg-light rounded rounded-pill shadow-sm">
+                  <div class="input-group">
+                     <input type="search" name="q" type="text" value="{{ request.GET.q }}" placeholder="Search" class="form-control border-0 bg-light" />
+                     <div class="input-group-append">
+                        <button type="submit" onclick="searchform.submit()" class="btn btn-link text-dark"><i class="fa fa-search"></i></button>
+                     </div>
+                  </div>
+               </div>
+            </form>
+         </div>
+      </nav>
+      <div class="m-3">
+         {% block content %}
+         {% endblock  %}
+      </div>
+      </main>
+      <!--Footer-->
+      <section class="">
+        <!-- Footer -->
+        <footer class="text-center text-black">
+          <!-- Grid container -->
+          <div class="container p-3">
+            <!-- Section: CTA -->
+            <section class="mt-3">
+              <p class="d-flex justify-content-center align-items-center">
+                {% if user.is_authenticated %}
+                <span class="mr-2">Go to your <a href="{% url 'profile' %}">account page</a></span>
+                {% else %}
+                <span class="mr-2">Create an account for free</span>
+                <a href="{% url 'register' %}" class="btn btn-outline-dark btn-rounded">
+                  Sign up
                 </a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                  <span class="navbar-toggler-icon"></span>
-                </button>
-              
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                  <!--<ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
-                      <a class="nav-link" href="{% url 'blog-home' %}"><i class="fas fa-home"></i> Home <span class="sr-only">(current)</span></a>
-                    </li>
-                    
-                  </ul>-->
-                  <!------{{ request.get_host }}/blog/search/-->
-              
-                    {% if user.is_authenticated %}
-                    <a href="{% url 'user-definitions' user %}" class="btn text-black m-1"><i class="fas fa-book"></i> My Definitions</a>
-                    <a href="{% url 'definition-create' %} " class="btn text-black m-1"><i class="fas fa-pen"></i> New Definition</a>
-                    <a href="{% url 'profile' %} " class="btn text-black m-1"><i class="fas fa-user"></i> {{ user.username }}</a>
-                    <a title="Log out" href="{% url 'logout' %} " class="btn text-black m-1"><i class="fas fa-sign-out-alt"></i></a>
-                    
-                    {% else %}
-                    <a href="{% url 'login' %} " class="btn text-black m-1"><i class="fas fa-user-tie"></i> Log In</a>
-                   
-                    <a href="{% url 'register' %} " class="btn text-black m-1"> <i class="fas fa-sign-in-alt"></i> Sign Up</a>
-                    {% endif %}
+                {% endif %}
+              </p>
+            </section>
+            <!-- Section: CTA -->
+          </div>
+          <!-- Grid container -->
+      
+          <!-- Copyright -->
+          <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.1);">
+            © Copyright Toby Usher, 2023
+          </div>
+          <!-- Copyright -->
+        </footer>
+        <!-- Footer -->
+      </section>
 
-                    <form id="searchform" action="{% url 'search' %}" method="get">
-                      <div class="p-0 bg-light rounded rounded-pill shadow-sm">
-                        <div class="input-group">
-                          <input type="search" name="q" type="text" value="{{ request.GET.q }}" placeholder="Search" class="form-control border-0 bg-light" />
-                          <div class="input-group-append">
-                            <button type="submit" onclick="searchform.submit()" class="btn btn-link text-dark"><i class="fa fa-search"></i></button>
-                          </div>
-                        </div>
-                      </div>
-                    </form>
-                  
-                </div>
-              </nav>
-      
-    <div class="row mr-0">
-      <div class="col-2 ml-2 mt-3">
-              <!-- Sidebar -->
-              <div id="sidebar-wrapper">
-                <h5>Categories</h5>
-                <ul class="sidebar-nav">
-                    {% for category in categories %}
-                    <li>
-                        <a href="#">{{category.name}}</a>
-                    </li>
-                    {% endfor %}
-                </ul>
-            </div>
-            <!-- /#sidebar-wrapper -->
-      </div><!-- end col-->
-      <div class="col">
-      {% block content %}
-      
-      {% endblock  %}
-      </div><!-- end col-->
-    </div><!-- end row-->
-</div>`
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    <script src="{% static 'blog/main.js' %}"></script>
-  </body>
+      <!-- Optional JavaScript -->
+      <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+      <script src="{% static 'blog/main.js' %}"></script>
+   </body>
 </html>
