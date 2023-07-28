@@ -10,6 +10,7 @@
       <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.4.0/css/all.css" >
       <link rel="stylesheet" href="{% static 'blog/main.css' %}">
       <title>{{title|default:"Corporate Jargon Dictionary"}}</title>
+      <link rel="icon" href="{{ STATIC_URL }}/img/favicon_io/favicon.ico" sizes="48x48" />
    </head>
    <body>
       <main>
@@ -50,7 +51,7 @@
             </form>
          </div>
       </nav>
-      <div class="m-3">
+      <div class="content m-3 row d-flex justify-content-center">
          {% block content %}
          {% endblock  %}
       </div>

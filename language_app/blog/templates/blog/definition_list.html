@@ -1,0 +1,43 @@
+{% for definition in definitions %}
+<article class="media content-section shadow mt-3">
+  <a href="{{ definition.author.profile.image.url }} " target="_blank"> <img src="{{ definition.author.profile.image.url }}  " alt="" class="article-img rounded-circle img-thumbnail img-fluid shadow"></a>
+  <div class="media-body">
+    <div class="article-metadata">
+      <a class="mr-2" href="{% url 'user-definitions' definition.author.username %}">{{ definition.author }}</a>
+      <small class="text-muted">{{ definition.date_posted|date:"F d, Y" }}</small>
+    </div>
+    <h2><a class="article-title" href="{% url 'definition-detail' definition.id %}">{{ definition.word }}</a></h2>
+    <p class="article-content mr-3">{{ definition.description }}</p>
+    {% if user.is_authenticated %}
+      {% if definition.author != user %}
+      <form class="like-form float-right" action="{% url 'definition-like' definition.pk %}" method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="definition_id" value="{{ definition.id }}">
+        <!---Find a more efficient way to write this. Can't figure out how to combine with and if to create conditional variable--->
+        {% if user in definition.likes.all %}
+        <button type="submit" class="btn btn-warning btn-d">
+          <i class="fas fa-star"></i>
+            <span class="like-count">{{ definition.total_likes }}</span>
+        </button>
+        {% else %}
+        <button type="submit" class="btn btn-outline-dark btn-d">
+        <i class="fas fa-star"></i>
+          <span class="like-count">{{ definition.total_likes }}</span>
+        </button>
+        {% endif %}
+      </form>
+      {% endif %}
+    {% else %}
+    <span class="float-right">
+      <i class="fas fa-star"></i>
+        <span class="like-count">{{ definition.total_likes }}</span>
+    </span>
+    {% endif %}
+    {% if definition.author == user %}
+    <div class="float-right"><a class="btn btn-dark mt-1 mb-1" href="{% url 'definition-update' definition.id %}">Edit</a></div>
+    {% endif %}
+  </div>
+</article>
+{% empty %}
+<p>No definitions to show!</p>
+{% endfor %}

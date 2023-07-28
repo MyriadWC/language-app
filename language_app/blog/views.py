@@ -33,13 +33,16 @@ def home(request):
 
 def search(request):
     # Change this to use the search page (with home potentially embedded inside)
-    template='blog/home.html'
+    template='blog/search.html'
 
     query=request.GET.get('q')
 
     result=Definition.objects.filter(Q(word__icontains=query) | Q(author__username__icontains=query) | Q(description__icontains=query))
     paginate_by=10
-    context={ 'definitions':result }
+    context={
+        'query_string': query,
+        'definitions': result
+        }
     return render(request,template,context)
 
 def getfile(request):

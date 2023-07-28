@@ -2,9 +2,12 @@ body {
   background: #fafafa;
   color: #333333;
   margin-top: 0;
-  position: relative
+  position: relative;
+  /* Prevents footer floating up pages with less content */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
-
 
 h1, h2, h3, h4, h5, h6 {
   color: #444444;
@@ -22,6 +25,7 @@ nav {
 /* Footer styling */
 footer {
   background-color: #ffd60a;
+  margin-top: auto !important;
 }
 
 .bg-steel {
@@ -59,7 +63,7 @@ footer {
 }
 
 a.article-title:hover {
-  color: #428bca;
+  color: #333333;
   text-decoration: none;
 }
 

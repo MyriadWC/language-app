@@ -1,15 +1,15 @@
 {% extends "blog/base.html" %}
 {% block content %}
 
-<div class="row mr-0">
-  <div class="col-2 d-none d-md-flex">
+<div class="row">
+  <div class="col-2 d-none d-md-flex mr-3">
           <!-- Sidebar -->
           <div id="sidebar-wrapper">
             <h5>Categories</h5>
             <ul class="sidebar-nav list-unstyled">
                 {% for category in categories %}
                 <li>
-                    <a href="#">{{category.name}}</a>
+                    <a href="#" class="">{{category.name}}</a>
                 </li>
                 {% endfor %}
             </ul>
@@ -19,10 +19,10 @@
   <div class="col">
     <!--Desktop buttons-->
     <div class="select-category d-none d-md-flex">
-      <button class="btn btn-dark mr-1">Most recent</button>
-      <button class="btn btn-outline-dark mr-1">Popular today</button>
-      <button class="btn btn-outline-dark mr-1">Popular this week</button>
-      <button class="btn btn-outline-dark">All time most popular</button>
+      <a href= "#" class="btn btn-dark mr-1">Most recent</a>
+      <a href= "#" class="btn btn-outline-dark mr-1">Popular today</a>
+      <a href= "#" class="btn btn-outline-dark mr-1">Popular this week</a>
+      <a href= "#" class="btn btn-outline-dark">All time most popular</a>
     </div>
 
     <!--Mobile device dropdown-->
@@ -38,49 +38,7 @@
       </div>
     </div>
     
-    {% for definition in definitions %}
-    <article class="media content-section shadow mt-3">
-      <a href="{{ definition.author.profile.image.url }} " target="_blank"> <img src="{{ definition.author.profile.image.url }}  " alt="" class="article-img rounded-circle img-thumbnail img-fluid shadow"></a>
-      <div class="media-body">
-        <div class="article-metadata">
-          <a class="mr-2" href="{% url 'user-definitions' definition.author.username %}">{{ definition.author }}</a>
-          <small class="text-muted">{{ definition.date_posted|date:"F d, Y" }}</small>
-        </div>
-        <h2><a class="article-title" href="{% url 'definition-detail' definition.id %}">{{ definition.word }}</a></h2>
-        <p class="article-content">{{ definition.description }}</p>
-        {% if user.is_authenticated %}
-          {% if definition.author != user %}
-          <form class="like-form float-right" action="{% url 'definition-like' definition.pk %}" method="POST">
-            {% csrf_token %}
-            <input type="hidden" name="definition_id" value="{{ definition.id }}">
-            <!---Find a more efficient way to write this. Can't figure out how to combine with and if to create conditional variable--->
-            {% if user in definition.likes.all %}
-            <button type="submit" class="btn btn-warning btn-d">
-              <i class="fas fa-star"></i>
-                <span class="like-count">{{ definition.total_likes }}</span>
-            </button>
-            {% else %}
-            <button type="submit" class="btn btn-outline-dark btn-d">
-            <i class="fas fa-star"></i>
-              <span class="like-count">{{ definition.total_likes }}</span>
-            </button>
-            {% endif %}
-          </form>
-          {% endif %}
-        {% else %}
-        <span class="float-right">
-          <i class="fas fa-star"></i>
-            <span class="like-count">{{ definition.total_likes }}</span>
-        </span>
-        {% endif %}
-        {% if definition.author == user %}
-        <div class="float-right"><a class="btn btn-dark mt-1 mb-1" href="{% url 'definition-update' definition.id %}">Edit</a></div>
-        {% endif %}
-      </div>
-    </article>
-    {% empty %}
-    <p>No definitions to show!</p>
-    {% endfor %}
+    {% include 'blog/definition_list.html' %}
 
   {% if is_paginated %}
 

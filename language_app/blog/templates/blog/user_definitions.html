@@ -1,5 +1,6 @@
 {% extends "blog/base.html" %}
 {% block content %}
+  <div>
     <h1 class="mt-3 mb-3">Definitions by {{ view.kwargs.username }} ({{ page_obj.paginator.count }})</h1>
     {% for definition in definitions %}
         <article class="media content-section">
@@ -33,7 +34,7 @@
         <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
         <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
       {% endif %}
-
+  </div>
 
 
     {% endif %}

@@ -18,6 +18,6 @@ urlpatterns = [
     path('definition/<int:pk>/update/', DefinitionUpdateView.as_view(), name='definition-update'),
     path('definition/<int:pk>/delete/', DefinitionDeleteView.as_view(), name='definition-delete'),
     path('like/<int:pk>', LikeView, name='definition-like'),
-    path('search/',views.search, name='search' ),
+    path('search/', views.search, name='search' ),
     path('about/', views.about, name='blog-about'),
 ]
