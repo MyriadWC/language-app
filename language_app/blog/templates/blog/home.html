@@ -1,4 +1,5 @@
 {% extends "blog/base.html" %}
+{% load blog_filters %}
 {% block content %}
 
 <div class="row">
@@ -19,10 +20,10 @@
   <div class="col">
     <!--Desktop buttons-->
     <div class="select-category d-none d-md-flex">
-      <a href= "#" class="btn btn-dark mr-1">Most recent</a>
-      <a href= "#" class="btn btn-outline-dark mr-1">Popular today</a>
-      <a href= "#" class="btn btn-outline-dark mr-1">Popular this week</a>
-      <a href= "#" class="btn btn-outline-dark">All time most popular</a>
+      <a href="{% url 'blog-home-ordered' 'most-recent' %}" class="{{ 'most-recent'|ordering_button_style:ordering }} mr-1">Most recent</a>
+      <a href="{% url 'blog-home-ordered' 'popular-day' %}" class="{{ 'popular-day'|ordering_button_style:ordering }} mr-1">Popular today</a>
+      <a href="{% url 'blog-home-ordered' 'popular-week' %}" class="{{ 'popular-week'|ordering_button_style:ordering }} mr-1">Popular this week</a>
+      <a href="{% url 'blog-home-ordered' 'popular-all-time' %}" class="{{ 'popular-all-time'|ordering_button_style:ordering }}">All time most popular</a>
     </div>
 
     <!--Mobile device dropdown-->
@@ -31,13 +32,15 @@
         Most recent
       </button>
       <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-        <a class="dropdown-item" href="#">Most recent</a>
-        <a class="dropdown-item" href="#">Popular today</a>
-        <a class="dropdown-item" href="#">Popular this week</a>
-        <a class="dropdown-item" href="#">All time most popular</a>
+        <a class="dropdown-item" href="{% url 'blog-home-ordered' 'most-recent' %}">Most recent</a>
+        <a class="dropdown-item" href="{% url 'blog-home-ordered' 'popular-day' %}">Popular today</a>
+        <a class="dropdown-item" href="{% url 'blog-home-ordered' 'popular-week' %}">Popular this week</a>
+        <a class="dropdown-item" href="{% url 'blog-home-ordered' 'popular-all-time' %}">All time most popular</a>
       </div>
     </div>
     
+    <h2 class="mt-3">{{ list_title }}</h2>
+
     {% include 'blog/definition_list.html' %}
 
   {% if is_paginated %}

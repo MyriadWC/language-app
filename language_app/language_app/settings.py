@@ -27,11 +27,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
-    'blog.apps.BlogConfig',
+    'blog',
+    #'blog.apps.BlogConfig',
     'users.apps.UsersConfig',
     'crispy_forms',
     'crispy_bootstrap4',

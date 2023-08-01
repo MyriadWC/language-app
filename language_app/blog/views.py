@@ -1,4 +1,7 @@
 import random
+from datetime import datetime, timedelta
+from typing import Any
+from django.db.models.query import QuerySet
 
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
@@ -53,15 +56,55 @@ class DefinitionListView(ListView):
     model = Definition
     template_name = 'blog/home.html'  # <app>/<model>_<viewtype>.html
     context_object_name = 'definitions'
-    ordering = ['-date_posted']
+    #ordering = ['-date_posted']
     paginate_by = 10
+
+    def get_queryset(self) -> QuerySet[Any]:
+
+        ordering = self.kwargs.get('ordering', 'most-recent')
+
+        # Filter by date range based on ordering option
+        now = datetime.now()
+
+        ordering_map = {
+            'most-recent': Definition.objects.order_by('-date_posted'),
+            'popular-day': Definition.objects.filter(Q(date_posted__gte=(now - timedelta(days=1)))).order_by('likes'),
+            'popular-week': Definition.objects.filter(Q(date_posted__gte=(now - timedelta(weeks=1)))).order_by('likes'),
+            'popular-all-time': Definition.objects.order_by('likes'),
+        }
+
+        # Return definition objects in correct order or default to date posted order
+        return ordering_map.get(ordering, Definition.objects.order_by('-date_posted'))
+        #return super().get_queryset()
 
     # Override this method to add categories to context
     def get_context_data(self, **kwargs):
 
         context = super().get_context_data(**kwargs)
+
         # Order categories alphabetically
         context['categories'] = Category.objects.all().order_by('name')
+
+        # This is sloppy. The whole view needs cleaning up.
+        ordering = self.kwargs.get('ordering')
+        ordering = (
+            ordering
+            if ordering in ['most-recent', 'popular-day', 'popular-week', 'popular-all-time']
+            else 'most-recent'
+            )
+        
+        context['ordering'] = ordering
+        
+        # Map ordering to list title
+        list_title_map = {
+            'most-recent' : 'Most recent',
+            'popular-day': 'Popular today',
+            'popular-week': 'Popular this week',
+            'popular-all-time': 'All time most popular'
+        }
+        
+        context['list_title'] = list_title_map[ordering]
+
         return context
 
 
