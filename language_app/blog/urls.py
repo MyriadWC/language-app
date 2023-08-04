@@ -6,7 +6,8 @@ from .views import (
     DefinitionUpdateView,
     DefinitionDeleteView,
     UserDefinitionListView,
-    LikeView
+    CategoryDefinitionListView,
+    like_view
 )
 from . import views
 
@@ -19,11 +20,12 @@ urlpatterns = [
         #kwargs={'ordering': None}
         ),
     path('user/<str:username>', UserDefinitionListView.as_view(), name='user-definitions'),
+    path('categories/<str:category>', CategoryDefinitionListView.as_view(), name='category'),
     path('definition/<int:pk>/', DefinitionDetailView.as_view(), name='definition-detail'),
     path('definition/new/', DefinitionCreateView.as_view(), name='definition-create'),
     path('definition/<int:pk>/update/', DefinitionUpdateView.as_view(), name='definition-update'),
     path('definition/<int:pk>/delete/', DefinitionDeleteView.as_view(), name='definition-delete'),
-    path('like/<int:pk>', LikeView, name='definition-like'),
+    path('like/<int:pk>', like_view, name='definition-like'),
     path('search/', views.search, name='search' ),
     path('about/', views.about, name='blog-about'),
 ]

@@ -10,21 +10,39 @@
         <a class="mr-2 mt-0 mb-0  text-dark" href="{% url 'user-definitions' object.author.username  %}"><h3>{{ object.author }}</h3></a>
         <small class="text-muted  text-align-right">{{ object.date_posted }}</small>
         </div>
-        {% if object.author != user %}
-        <form action="{% url 'definition-like' definition.pk %}" method="POST">
-          {% csrf_token %}
-          <button type="submit", name="definition_id", value="{{ definition.id }}", class="btn btn-outline-primary btn-d">
-            <i class="fas fa-star"></i> {{ total_likes }}
-          </button>
-        </form>
-        {% endif %}
-        <hr>
-        {% if object.author == user %}
+        <!-- Turn this button into a template and move the repeated javascript function elsewhere -->
+        {% if user.is_authenticated %}
+          {% if object.author != user %}
+            <form class="like-form" action="{% url 'definition-like' definition.pk %}" method="POST">
+              {% csrf_token %}
+              <input type="hidden" name="definition_id" value="{{ definition.id }}">
+              <!---Find a more efficient way to write this. Can't figure out how to combine with and if to create conditional variable--->
+              {% if user in definition.likes.all %}
+              <button type="submit" class="btn btn-warning btn-d">
+                <i class="fas fa-star"></i>
+                  <span class="like-count">{{ definition.total_likes }}</span>
+              </button>
+              {% else %}
+              <button type="submit" class="btn btn-outline-dark btn-d">
+              <i class="fas fa-star"></i>
+                <span class="like-count">{{ definition.total_likes }}</span>
+              </button>
+              {% endif %}
+            </form>
+          {% endif %}
+          {% if object.author == user %}
+            <div>
+              <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'definition-update' object.id %}">Update</a>
+              <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'definition-delete' object.id %}">Delete</a>
+            </div>
+          {% endif %}
+        {% else %}
           <div>
-            <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'definition-update' object.id %}">Update</a>
-            <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'definition-delete' object.id %}">Delete</a>
+            <i class="fas fa-star"></i>
+              <span class="like-count">{{ definition.total_likes }}</span>
           </div>
         {% endif %}
+        <hr>
       </div>
       <div>
         <h2>{{ object.word }}</h2>

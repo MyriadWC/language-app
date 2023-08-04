@@ -1,43 +1,71 @@
 {% for definition in definitions %}
-<article class="media content-section shadow mt-3">
-  <a href="{{ definition.author.profile.image.url }} " target="_blank"> <img src="{{ definition.author.profile.image.url }}  " alt="" class="article-img rounded-circle img-thumbnail img-fluid shadow"></a>
-  <div class="media-body">
-    <div class="article-metadata">
-      <a class="mr-2" href="{% url 'user-definitions' definition.author.username %}">{{ definition.author }}</a>
-      <small class="text-muted">{{ definition.date_posted|date:"F d, Y" }}</small>
-    </div>
-    <h2><a class="article-title" href="{% url 'definition-detail' definition.id %}">{{ definition.word }}</a></h2>
-    <p class="article-content mr-3">{{ definition.description }}</p>
-    {% if user.is_authenticated %}
-      {% if definition.author != user %}
-      <form class="like-form float-right" action="{% url 'definition-like' definition.pk %}" method="POST">
-        {% csrf_token %}
-        <input type="hidden" name="definition_id" value="{{ definition.id }}">
-        <!---Find a more efficient way to write this. Can't figure out how to combine with and if to create conditional variable--->
-        {% if user in definition.likes.all %}
-        <button type="submit" class="btn btn-warning btn-d">
+  <article class="media content-section shadow mt-3">
+    <a href="{{ definition.author.profile.image.url }} " target="_blank"> <img src="{{ definition.author.profile.image.url }}  " alt="" class="article-img rounded-circle img-thumbnail img-fluid shadow"></a>
+    <div class="media-body">
+      <div class="article-metadata">
+        <a class="mr-2 text-dark" href="{% url 'user-definitions' definition.author.username %}">{{ definition.author }}</a>
+        <small class="text-muted">{{ definition.date_posted|date:"F d, Y" }}</small>
+      </div>
+      <h2><a class="article-title" href="{% url 'definition-detail' definition.id %}">{{ definition.word }}</a></h2>
+      <p class="article-content mr-3">{{ definition.description }}</p>
+      {% if user.is_authenticated %}
+        {% if definition.author != user %}
+        <form class="like-form float-right" action="{% url 'definition-like' definition.pk %}" method="POST">
+          {% csrf_token %}
+          <input type="hidden" name="definition_id" value="{{ definition.id }}">
+          <!---Find a more efficient way to write this. Can't figure out how to combine with and if to create conditional variable--->
+          {% if user in definition.likes.all %}
+          <button type="submit" class="btn btn-warning btn-d">
+            <i class="fas fa-star"></i>
+              <span class="like-count">{{ definition.total_likes }}</span>
+          </button>
+          {% else %}
+          <button type="submit" class="btn btn-outline-dark btn-d">
           <i class="fas fa-star"></i>
             <span class="like-count">{{ definition.total_likes }}</span>
-        </button>
-        {% else %}
-        <button type="submit" class="btn btn-outline-dark btn-d">
+          </button>
+          {% endif %}
+        </form>
+        {% endif %}
+      {% else %}
+      <span class="float-right">
         <i class="fas fa-star"></i>
           <span class="like-count">{{ definition.total_likes }}</span>
-        </button>
-        {% endif %}
-      </form>
+      </span>
       {% endif %}
-    {% else %}
-    <span class="float-right">
-      <i class="fas fa-star"></i>
-        <span class="like-count">{{ definition.total_likes }}</span>
-    </span>
-    {% endif %}
-    {% if definition.author == user %}
-    <div class="float-right"><a class="btn btn-dark mt-1 mb-1" href="{% url 'definition-update' definition.id %}">Edit</a></div>
-    {% endif %}
-  </div>
-</article>
+      {% if definition.author == user %}
+      <div class="float-right btn-group">
+        <a class="btn btn-dark mt-1 mb-1" href="{% url 'definition-update' definition.id %}">
+          <i class="fas fa-star"></i>
+          <span class="like-count">{{ definition.total_likes }}</span>
+          Edit
+        </a>
+      </div>
+      {% endif %}
+    </div>
+  </article>
 {% empty %}
-<p>No definitions to show!</p>
+  <article class="media content-section shadow mt-3">
+    <h3 class="mb-3 mt-1">No definitions to show!</h3>
+  </article>
 {% endfor %}
+
+{% if is_paginated %}
+
+{% if page_obj.has_previous %}
+  <a class="btn btn-outline-dark mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+{% endif %}
+
+{% for num in page_obj.paginator.page_range %}
+  {% if page_obj.number == num %}
+    <a class="btn btn-dark mb-4" href="?page={{ num }}">{{ num }}</a>
+  {% elif num > page_obj.number|add:'-2' and num < page_obj.number|add:'2' %}
+    <a class="btn btn-outline-dark mb-4" href="?page={{ num }}">{{ num }}</a>
+  {% endif %}
+{% endfor %}
+
+{% if page_obj.has_next %}
+  <a class="btn btn-outline-dark mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
+{% endif %}
+
+{% endif %} 

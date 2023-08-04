@@ -1,35 +1,23 @@
 {% extends "blog/base.html" %}
 {% load blog_filters %}
 {% block content %}
-
 <div class="row">
-  <div class="col-2 d-none d-md-flex mr-3">
-          <!-- Sidebar -->
-          <div id="sidebar-wrapper">
-            <h5>Categories</h5>
-            <ul class="sidebar-nav list-unstyled">
-                {% for category in categories %}
-                <li>
-                    <a href="#" class="">{{category.name}}</a>
-                </li>
-                {% endfor %}
-            </ul>
-          </div>
-        <!-- /#sidebar-wrapper -->
+  <div class="col-3 d-none d-md-flex">
+    {% include 'blog/sidebar_left.html' %}
   </div><!-- end col-->
   <div class="col">
     <!--Desktop buttons-->
     <div class="select-category d-none d-md-flex">
       <a href="{% url 'blog-home-ordered' 'most-recent' %}" class="{{ 'most-recent'|ordering_button_style:ordering }} mr-1">Most recent</a>
-      <a href="{% url 'blog-home-ordered' 'popular-day' %}" class="{{ 'popular-day'|ordering_button_style:ordering }} mr-1">Popular today</a>
-      <a href="{% url 'blog-home-ordered' 'popular-week' %}" class="{{ 'popular-week'|ordering_button_style:ordering }} mr-1">Popular this week</a>
+      <a href="{% url 'blog-home-ordered' 'popular-day' %}" class="{{ 'popular-day'|ordering_button_style:ordering }} mr-1">Hot today</a>
+      <a href="{% url 'blog-home-ordered' 'popular-week' %}" class="{{ 'popular-week'|ordering_button_style:ordering }} mr-1">Hot this week</a>
       <a href="{% url 'blog-home-ordered' 'popular-all-time' %}" class="{{ 'popular-all-time'|ordering_button_style:ordering }}">All time most popular</a>
     </div>
 
     <!--Mobile device dropdown-->
     <div class="select-category dropdown d-md-none">
       <button class="btn btn-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Most recent
+        {{ list_title }}
       </button>
       <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
         <a class="dropdown-item" href="{% url 'blog-home-ordered' 'most-recent' %}">Most recent</a>
@@ -43,62 +31,6 @@
 
     {% include 'blog/definition_list.html' %}
 
-  {% if is_paginated %}
-
-    {% if page_obj.has_previous %}
-      <a class="btn btn-outline-dark mb-4" href="?page=1">First</a>
-      <a class="btn btn-outline-dark mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
-    {% endif %}
-
-    {% for num in page_obj.paginator.page_range %}
-      {% if page_obj.number == num %}
-        <a class="btn btn-dark mb-4" href="?page={{ num }}">{{ num }}</a>
-      {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-        <a class="btn btn-outline-dark mb-4" href="?page={{ num }}">{{ num }}</a>
-      {% endif %}
-    {% endfor %}
-
-    {% if page_obj.has_next %}
-      <a class="btn btn-outline-dark mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
-      <a class="btn btn-outline-dark mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
-    {% endif %}
-
-  {% endif %} 
   </div><!-- end col-->
 </div><!-- end row-->
-
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-  <script>
-    $(document).ready(function() {
-
-      //Update likes when like button pressed
-      $('.like-form').on('submit', function(event) {
-        event.preventDefault();
-        var form = $(this);
-        var url = form.attr('action');
-        var data = form.serialize();
-        $.ajax({
-          type: 'POST',
-          url: url,
-          data: data,
-          success: function(response) {
-            // Update the like count
-            form.find('.like-count').text(response.total_likes);
-
-            //Change button from outline to block
-            form.find('button').toggleClass('btn-outline-dark btn-warning')
-          }
-        });
-      });
-
-      //Set dropdown button text equal to the selected value in bootstrap dropdowns
-      $(function(){
-        $(".dropdown > .dropdown-menu").on('click', 'a', function(){
-          $(".dropdown > .btn:first-child").text($(this).text());
-          $(".dropdown > .btn:first-child").val($(this).text());
-        });
-      });
-
-    }); // End document ready
-  </script>
 {% endblock content %}
