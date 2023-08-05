@@ -42,6 +42,12 @@
         </a>
       </div>
       {% endif %}
+      <!--Categories pills-->
+      <div>
+        {% for category in definition.categories.all %}
+          <a href="{% url 'category' category.name %}" class="badge badge-warning badge-pill">{{ category.name }}</a>
+        {% endfor %}
+      </div>
     </div>
   </article>
 {% empty %}

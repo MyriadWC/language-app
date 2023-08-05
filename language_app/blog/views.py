@@ -171,6 +171,14 @@ class DefinitionCreateView(LoginRequiredMixin, CreateView):
     form_class = DefinitionForm
 
     def form_valid(self, form):
+
+        categories = form.cleaned_data['categories']
+        
+        if len(categories) > 5:
+
+            form.add_error('categories', "A definition can belong to at most five categories")
+            return self.form_invalid(form)
+
         form.instance.author = self.request.user
 
         # Returns an instance of the Definition model, which can then be manipulated before saving
@@ -202,6 +210,14 @@ class DefinitionUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     form_class = DefinitionForm
 
     def form_valid(self, form):
+
+        categories = form.cleaned_data['categories']
+
+        if len(categories) > 5:
+
+            form.add_error('categories', "A definition can belong to at most five categories")
+            return self.form_invalid(form)
+
         form.instance.author = self.request.user
         return super().form_valid(form)
 

@@ -31,11 +31,14 @@ class Definition(models.Model):
 	def total_likes(self):
 		return self.likes.count()
 	
+	"""
 	def clean(self):
 
 		if self.categories.count() > 5:
 
+			# Validation errors passed back to the form and displayed automatically for children
+			# of CreateView and UpdateView
 			raise ValidationError(
 				"A definition can belong to at most five categories"
 				)
-
+	"""
