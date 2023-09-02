@@ -10,7 +10,7 @@ from .models import Definition
 class DefinitionForm(forms.ModelForm):
     class Meta:
         model = Definition
-        fields = ['word', 'description', 'categories']
+        fields = ['phrase', 'description', 'categories']
         widgets = {
             'categories': forms.CheckboxSelectMultiple(attrs={'size': 5})
         }

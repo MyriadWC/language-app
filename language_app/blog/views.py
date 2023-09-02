@@ -44,7 +44,7 @@ def search(request):
 
     query=request.GET.get('q')
 
-    result=Definition.objects.filter(Q(word__icontains=query) | Q(author__username__icontains=query) | Q(description__icontains=query))
+    result=Definition.objects.filter(Q(phrase__icontains=query) | Q(author__username__icontains=query) | Q(description__icontains=query))
     paginate_by = constants.DEFINITIONS_PER_PAGE
     context={
         'title': f'Search results for "{query}"',

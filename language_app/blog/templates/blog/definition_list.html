@@ -6,7 +6,7 @@
         <a class="mr-2 text-dark" href="{% url 'user-definitions' definition.author.username %}">{{ definition.author }}</a>
         <small class="text-muted">{{ definition.date_posted|date:"F d, Y" }}</small>
       </div>
-      <h2><a class="article-title" href="{% url 'definition-detail' definition.id %}">{{ definition.word }}</a></h2>
+      <h2><a class="article-title" href="{% url 'definition-detail' definition.id %}">{{ definition.phrase }}</a></h2>
       <p class="article-content mr-3">{{ definition.description }}</p>
       {% if user.is_authenticated %}
         {% if definition.author != user %}
